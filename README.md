@@ -28,12 +28,10 @@ SETUP:
         Open folder in a text editor 
 
 
-To generate resource: 
-        $ rails generate resource Student name:string cohort:string 
-        $ rails routes DONT FORGET TO SAVE ALL ROUTES OR ELSE 
-        $ rails db:migrate
 
 Create a resource for animal with the following information: common name and scientific binomial
+
+To generate resource: 
 
    $rails generate resource Animal common_name:string scientific_binomial:string ✅
                   invoke  active_record
@@ -359,8 +357,43 @@ DELETE localhost:3000/animals/5
         }
 
 
+// Animals.all //
+
+    [
+        {
+            "id": 1,
+            "common_name": "Dog",
+            "scientific_binomial": "Canis familiaris",
+            "created_at": "2022-09-09T04:45:15.831Z",
+            "updated_at": "2022-09-09T04:45:15.831Z"
+        },
+        {
+            "id": 2,
+            "common_name": "Whale",
+            "scientific_binomial": "Cetacea",
+            "created_at": "2022-09-09T05:12:19.270Z",
+            "updated_at": "2022-09-09T05:12:19.270Z"
+        },
+        {
+            "id": 3,
+            "common_name": "Penguin",
+            "scientific_binomial": "Spheniscidae",
+            "created_at": "2022-09-09T05:34:40.258Z",
+            "updated_at": "2022-09-09T05:34:40.258Z"
+        },
+        {
+            "id": 4,
+            "common_name": "Jellyfish",
+            "scientific_binomial": "Aurelia aurita",
+            "created_at": "2022-09-09T05:42:44.400Z",
+            "updated_at": "2022-09-09T05:45:02.291Z"
+        }
+    ]
+
+
 
 Story 2: In order to track wildlife sightings, as a user of the API, I need to manage animal sightings.
+
 
 Branch: sighting-crud-actions  ✅
 
@@ -369,19 +402,6 @@ Acceptance Criteria
 Create a resource for animal sightings with the following information: latitude, longitude, date
 Hint: An animal has_many sightings (rails g resource Sighting animal_id:integer ...)
 Hint: Date is written in Active Record as yyyy-mm-dd (“2022-07-28")
-
-$ rails generate migration sighting_migrate
-$ rails generate resource Sighting animal_id:integer latitude:integer longitude:integer date:date
-
-
-Can create a new animal sighting in the database
-
-
-Can update an existing animal sighting in the database
-
-
-Can remove an animal sighting in the database
-
 
 
 
