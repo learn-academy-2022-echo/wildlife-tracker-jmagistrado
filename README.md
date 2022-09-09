@@ -796,10 +796,9 @@ $ git status
 $ git add .
 $ git commit -m "crud complete"
 $ git status
-$ git push origin animal-crud-actions
+$ git push origin sighting-crud-actions
 $ git checkout main
-$ git checkout -d animal-crud-actions
-$ git checkout -b sighting-crud-actions
+$ git checkout -b animal-sightings-reports
 
 
 Story 3: In order to see the wildlife sightings, as a user of the API, I need to run reports on animal sightings.
