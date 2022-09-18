@@ -1098,6 +1098,9 @@ $ rails generate rspec:controller Animals
  
 Can see validation errors if an animal doesn't include a common name and scientific binomial
 
+command: 
+rspec spec/models/animal_spec.rb
+
     spec/models animal_spec.rb
 
     ```ruby 
@@ -1194,6 +1197,61 @@ Can see a validation error if an animal's common name exactly matches the scient
 
 
 Can see a validation error if the animal's common name and scientific binomial are not unique
+
+spec/models/animal_spec.rb
+
+```ruby 
+
+require 'rails_helper'
+
+RSpec.describe Animal, type: :model do
+  describe 'Animal Model' do 
+  it 'throws an error if common name is empty' do 
+  animal = Animal.create common_name: nil, scientific_binomial: 'jellyfish absolute'
+
+  p animal.errors[:common_name]
+
+    expect(animal.errors[:common_name]).to_not be_empty
+    expect(animal.errors[:common_name]).to eq ["can't be blank"]
+  end
+  it 'throws an error if scientific_binomial is empty' do 
+    animal = Animal.create common_name: 'jellyfish', scientific_binomial: nil
+  
+    p animal.errors[:scientific_binomial]
+  
+      expect(animal.errors[:scientific_binomial]).to_not be_empty
+      expect(animal.errors[:scientific_binomial]).to eq ["can't be blank"]
+  end
+  it 'is not valid if the common_name is not unique' do
+    Animal.create(common_name: 'jellyfish', scientific_binomial: 'jellyfishic absolute')
+    animal = Animal.create(common_name: 'jellyfish', scientific_binomial: 'jellyfishic absolute')
+    expect(animal.errors[:common_name]).to_not be_empty
+  end 
+  it 'is not valid if the scientific_binomial is not unique' do
+    Animal.create(common_name: 'jellyfish', scientific_binomial: 'jellyfishic absolute')
+    animal = Animal.create(common_name: 'jellyfish', scientific_binomial: 'jellyfishic absolute')
+    expect(animal.errors[:scientific_binomial]).to_not be_empty
+  end 
+end
+end
+
+```
+
+$ rspec spec/models/animal_spec.rb
+
+app/models/animal.rb
+
+```ruby
+
+class Animal < ApplicationRecord
+    validates :common_name, :scientific_binomial,  presence: true
+    validates :common_name, :scientific_binomial,uniqueness: true
+    has_many:sightings
+end
+
+```
+
+$ rspec spec/models/animal_spec.rb
 
 
 Can see a status code of 422 when a post request can not be completed because of validation errors
