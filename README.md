@@ -1068,22 +1068,195 @@ Hint: Routes with params
         ]
  
 
-
+$ git status
+$ git add 
+$ git push origin<branch-name>
+- merge into main on github
+$ git checkout main
+$ git pull origin 
+$ git checkout -b animal-sightings-specs
 
 
 Stretch Challenges
+
 Story 4: In order to see the wildlife sightings contain valid data, as a user of the API, I need to include proper specs.
  
 Branch: animal-sightings-specs
  
 Acceptance Criteria
+
 Validations will require specs in spec/models and the controller methods will require specs in spec/requests.
+
+Sighting model and requests spec have already been created 
+To create a rspec Animal model and requests, run the following command:
+
+$ rails generate rspec:model Animal
+    create  spec/models/animal_spec.rb
+
+$ rails generate rspec:controller Animals
+    create  spec/requests/animals_spec.rb
  
 Can see validation errors if an animal doesn't include a common name and scientific binomial
+
+command: 
+rspec spec/models/animal_spec.rb
+
+    spec/models animal_spec.rb
+
+    ```ruby 
+   require 'rails_helper'
+
+RSpec.describe Animal, type: :model do
+  describe 'Animal Model' do 
+  it 'throws an error if common name is empty' do 
+  animal = Animal.create common_name: nil, scientific_binomial: 'jellyfish absolute'
+
+  p animal.errors[:common_name]
+
+    expect(animal.errors[:common_name]).to_not be_empty
+    expect(animal.errors[:common_name]).to eq ["can't be blank"]
+  end
+  it 'throws an error if scientific_binomial is empty' do 
+    animal = Animal.create common_name: 'jellyfish', scientific_binomial: nil
+  
+    p animal.errors[:scientific_binomial]
+  
+      expect(animal.errors[:scientific_binomial]).to_not be_empty
+      expect(animal.errors[:scientific_binomial]).to eq ["can't be blank"]
+  end
+end
+end
+    ```
+
+
+app/models/animal.rb 
+
+```ruby 
+
+class Animal < ApplicationRecord
+    validates :common_name, :scientific_binomial,  presence: true
+    has_many:sightings
+end
+
+```
+
 Can see validation errors if a sighting doesn't include latitude, longitude, or a date
+
+spec/models/sighting_spec.rb
+
+```ruby 
+
+require 'rails_helper'
+
+RSpec.describe Sighting, type: :model do
+  describe 'Sighting Model' do 
+    it 'throws an error if latitude is empty' do 
+    sighting = Sighting.create animal_id: 1, latitude:nil, longitude: '89274.123 N', date:20220901 
+  
+    p sighting.errors[:latitude]
+  
+      expect(sighting.errors[:latitude]).to_not be_empty
+      expect(sighting.errors[:latitude]).to eq ["can't be blank"]
+    end
+    it 'throws an error if longitude is empty' do 
+      sighting = Sighting.create animal_id: 1, latitude: '1234.123 S', longitude:nil, date:20220901 
+    
+      p sighting.errors[:longitude]
+    
+        expect(sighting.errors[:longitude]).to_not be_empty
+        expect(sighting.errors[:longitude]).to eq ["can't be blank"]
+    end
+    it 'throws an error if date is empty' do 
+      sighting = Sighting.create animal_id: 1, latitude: '1234.123 S', longitude:'89274.123 N', date:nil 
+    
+      p sighting.errors[:date]
+    
+        expect(sighting.errors[:date]).to_not be_empty
+        expect(sighting.errors[:date]).to eq ["can't be blank"]
+    end
+  end
+end
+
+```
+
+app/models/sighting.rb
+
+```ruby
+
+class Sighting < ApplicationRecord
+    validates :latitude, :longitude, :date, presence: true
+    belongs_to:animal
+end
+
+```
+
+To run test: 
+$ rspec spec/models/sighting_spec.rb
+
 Can see a validation error if an animal's common name exactly matches the scientific binomial
+
+
 Can see a validation error if the animal's common name and scientific binomial are not unique
+
+spec/models/animal_spec.rb
+
+```ruby 
+
+require 'rails_helper'
+
+RSpec.describe Animal, type: :model do
+  describe 'Animal Model' do 
+  it 'throws an error if common name is empty' do 
+  animal = Animal.create common_name: nil, scientific_binomial: 'jellyfish absolute'
+
+  p animal.errors[:common_name]
+
+    expect(animal.errors[:common_name]).to_not be_empty
+    expect(animal.errors[:common_name]).to eq ["can't be blank"]
+  end
+  it 'throws an error if scientific_binomial is empty' do 
+    animal = Animal.create common_name: 'jellyfish', scientific_binomial: nil
+  
+    p animal.errors[:scientific_binomial]
+  
+      expect(animal.errors[:scientific_binomial]).to_not be_empty
+      expect(animal.errors[:scientific_binomial]).to eq ["can't be blank"]
+  end
+  it 'is not valid if the common_name is not unique' do
+    Animal.create(common_name: 'jellyfish', scientific_binomial: 'jellyfishic absolute')
+    animal = Animal.create(common_name: 'jellyfish', scientific_binomial: 'jellyfishic absolute')
+    expect(animal.errors[:common_name]).to_not be_empty
+  end 
+  it 'is not valid if the scientific_binomial is not unique' do
+    Animal.create(common_name: 'jellyfish', scientific_binomial: 'jellyfishic absolute')
+    animal = Animal.create(common_name: 'jellyfish', scientific_binomial: 'jellyfishic absolute')
+    expect(animal.errors[:scientific_binomial]).to_not be_empty
+  end 
+end
+end
+
+```
+
+$ rspec spec/models/animal_spec.rb
+
+app/models/animal.rb
+
+```ruby
+
+class Animal < ApplicationRecord
+    validates :common_name, :scientific_binomial,  presence: true
+    validates :common_name, :scientific_binomial,uniqueness: true
+    has_many:sightings
+end
+
+```
+
+$ rspec spec/models/animal_spec.rb
+
+
 Can see a status code of 422 when a post request can not be completed because of validation errors
+
+
 Hint: Handling Errors in an API Application the Rails Way
  
  
